@@ -1,0 +1,17 @@
+{
+  "name": "fortymm-end-to-end-tests",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:uat": "FORTYMM_E2E_TEST_BASE_URL=https://uat.fortymm.com playwright test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@playwright/test": "^1.46.0",
+    "@types/node": "^22.2.0"
+  }
+}
