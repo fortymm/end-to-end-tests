@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
+    "test:ui": "playwright test --ui",
     "test:uat": "FORTYMM_E2E_TEST_BASE_URL=https://uat.fortymm.com playwright test"
   },
   "keywords": [],
