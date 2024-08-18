@@ -34,6 +34,9 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: [
     {
+      name: 'ui'
+    },
+    {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup']
