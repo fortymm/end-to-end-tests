@@ -25,6 +25,6 @@ export class LogInPage {
 
   async goto() {
     await this.page.goto("/users/log_in");
-    await this.page.waitForSelector("body > .phx-connected"); // Ensure that the live-view is connected
+    await this.page.waitForSelector("body > .phx-connected");
   }
 }

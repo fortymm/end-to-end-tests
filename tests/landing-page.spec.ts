@@ -1,16 +1,30 @@
-import { test, expect } from '@playwright/test';
-import { LandingPage } from './page-objects/landing-page';
+import { test, expect } from "@playwright/test";
+import { LandingPage } from "./page-objects/landing-page";
+import { LayoutPage } from "./page-objects/layout-page";
 
-test('has title', async ({ page }) => {
+test("has title", async ({ page }) => {
   const landingPage = new LandingPage(page);
   await landingPage.goto();
   await expect(landingPage.heading).toBeVisible();
 });
 
-test.describe('with authenticated user', () => {
-  test.use({ storageState: 'playwright/.auth/first_test_user.json' });
+test.describe("with no authenticated user", () => {
+  test("shows links to log in and register", async ({ page }) => {
+    const landingPage = new LandingPage(page);
+    const layout = new LayoutPage(page);
+    await landingPage.goto();
 
-  test('has title', async ({ page }) => {
+    await expect(layout.logOutLink).not.toBeVisible();
+    await expect(layout.settingsLink).not.toBeVisible();
+    await expect(layout.logInLink).toBeVisible();
+    await expect(layout.registerLink).toBeVisible();
+  });
+});
+
+test.describe("with authenticated user", () => {
+  test.use({ storageState: "playwright/.auth/first_test_user.json" });
+
+  test("has title", async ({ page }) => {
     const landingPage = new LandingPage(page);
     await landingPage.goto();
     await expect(landingPage.heading).toBeVisible();
@@ -19,7 +33,20 @@ test.describe('with authenticated user', () => {
   test("shows the user's username", async ({ page }) => {
     const landingPage = new LandingPage(page);
     await landingPage.goto();
-    const firstUserUsername = await page.getByText('First User');
+    const firstUserUsername = await page.getByText("First User");
     await expect(firstUserUsername).toBeVisible();
+  });
+
+  test("shows links to log out and the user's settings page", async ({
+    page,
+  }) => {
+    const landingPage = new LandingPage(page);
+    const layout = new LayoutPage(page);
+    await landingPage.goto();
+
+    await expect(layout.logOutLink).toBeVisible();
+    await expect(layout.settingsLink).toBeVisible();
+    await expect(layout.logInLink).not.toBeVisible();
+    await expect(layout.registerLink).not.toBeVisible();
   });
 });
