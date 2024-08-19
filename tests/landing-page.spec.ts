@@ -1,6 +1,10 @@
 import { test, expect, devices } from "@playwright/test";
 import { LandingPage } from "./page-objects/landing-page";
 import { LayoutPage } from "./page-objects/layout-page";
+import { Menu } from "./page-objects/menu";
+
+const validateMenu = (menu: Menu) => {
+};
 
 test("has title", async ({ page }) => {
   const landingPage = new LandingPage(page);
@@ -15,35 +19,36 @@ test.describe("with no authenticated user", () => {
     test("shows and hides the mobile menu", async ({ page }) => {
       const landingPage = new LandingPage(page);
       const layout = new LayoutPage(page);
+      const menu = layout.mobileMenu;
       await landingPage.goto();
 
-      await expect(layout.logOutLink).not.toBeVisible();
+      await expect(menu.logOutLink).not.toBeVisible();
       await expect(layout.registerLink).not.toBeVisible();
       await expect(layout.logInLink).not.toBeVisible();
-      await expect(layout.settingsLink).not.toBeVisible();
+      await expect(menu.settingsLink).not.toBeVisible();
 
-      await expect(layout.openMobileMenuButton).toBeVisible();
-      await expect(layout.closeMobileMenuButton).not.toBeVisible();
+      await expect(menu.openButton).toBeVisible();
+      await expect(menu.closeButton).not.toBeVisible();
 
-      await layout.openMobileMenuButton.click();
+      await menu.openButton.click();
 
-      await expect(layout.closeMobileMenuButton).toBeVisible();
-      await expect(layout.openMobileMenuButton).not.toBeVisible();
+      await expect(menu.closeButton).toBeVisible();
+      await expect(menu.openButton).not.toBeVisible();
 
       await expect(layout.registerLink).toBeVisible();
       await expect(layout.logInLink).toBeVisible();
-      await expect(layout.logOutLink).not.toBeVisible();
-      await expect(layout.settingsLink).not.toBeVisible();
+      await expect(menu.logOutLink).not.toBeVisible();
+      await expect(menu.settingsLink).not.toBeVisible();
 
-      await layout.closeMobileMenuButton.click();
+      await menu.closeButton.click();
 
-      await expect(layout.closeMobileMenuButton).not.toBeVisible();
-      await expect(layout.openMobileMenuButton).toBeVisible();
+      await expect(menu.closeButton).not.toBeVisible();
+      await expect(menu.openButton).toBeVisible();
 
       await expect(layout.registerLink).not.toBeVisible();
       await expect(layout.logInLink).not.toBeVisible();
-      await expect(layout.logOutLink).not.toBeVisible();
-      await expect(layout.settingsLink).not.toBeVisible();
+      await expect(menu.logOutLink).not.toBeVisible();
+      await expect(menu.settingsLink).not.toBeVisible();
     });
   });
 
@@ -52,8 +57,8 @@ test.describe("with no authenticated user", () => {
     const layout = new LayoutPage(page);
     await landingPage.goto();
 
-    await expect(layout.logOutLink).not.toBeVisible();
-    await expect(layout.settingsLink).not.toBeVisible();
+    await expect(layout.userMenu.logOutLink).not.toBeVisible();
+    await expect(layout.userMenu.settingsLink).not.toBeVisible();
     await expect(layout.logInLink).toBeVisible();
     await expect(layout.registerLink).toBeVisible();
   });
@@ -62,76 +67,98 @@ test.describe("with no authenticated user", () => {
 test.describe("with authenticated user", () => {
   test.use({ storageState: "playwright/.auth/first_test_user.json" });
 
+  const validateMenu = async (menu: Menu) => {
+      await expect(menu.logOutLink).not.toBeVisible();
+      await expect(menu.settingsLink).not.toBeVisible();
+
+      await expect(menu.openButton).toBeVisible();
+      await expect(menu.closeButton).not.toBeVisible();
+
+      await menu.openButton.click();
+
+      await expect(menu.closeButton).toBeVisible();
+      await expect(menu.openButton).not.toBeVisible();
+
+      await expect(menu.logOutLink).toBeVisible();
+      await expect(menu.settingsLink).toBeVisible();
+
+      await menu.closeButton.click();
+
+      await expect(menu.closeButton).not.toBeVisible();
+      await expect(menu.openButton).toBeVisible();
+
+      await expect(menu.logOutLink).not.toBeVisible();
+      await expect(menu.settingsLink).not.toBeVisible();
+  };
+
   test.describe("when viewed on mobile", () => {
     test.use({ viewport: devices["iPhone 13"].viewport });
 
-    test("shows and hides the mobile menu", async ({ page }) => {
+    test("shows and hides the user menu", async ({ page }) => {
       const landingPage = new LandingPage(page);
       const layout = new LayoutPage(page);
+      const menu = layout.mobileMenu;
       await landingPage.goto();
 
-      await expect(layout.logOutLink).not.toBeVisible();
       await expect(layout.registerLink).not.toBeVisible();
       await expect(layout.logInLink).not.toBeVisible();
-      await expect(layout.settingsLink).not.toBeVisible();
 
-      await expect(page.locator('#mobile-menu').getByText('First User')).not.toBeVisible();
-      await expect(page.locator('#mobile-menu').getByText('first_test_user@test.test')).not.toBeVisible();
+      await expect(
+        page.locator("#mobile-menu").getByText("First User")
+      ).not.toBeVisible();
+      await expect(
+        page.locator("#mobile-menu").getByText("first_test_user@test.test")
+      ).not.toBeVisible();
 
-      await expect(layout.openMobileMenuButton).toBeVisible();
-      await expect(layout.closeMobileMenuButton).not.toBeVisible();
-
-      await layout.openMobileMenuButton.click();
-
-      await expect(layout.closeMobileMenuButton).toBeVisible();
-      await expect(layout.openMobileMenuButton).not.toBeVisible();
+      await menu.openButton.click();
 
       await expect(layout.registerLink).not.toBeVisible();
       await expect(layout.logInLink).not.toBeVisible();
-      await expect(layout.logOutLink).toBeVisible();
-      await expect(layout.settingsLink).toBeVisible();
 
-      await expect(page.locator('#mobile-menu').getByText('First User')).toBeVisible();
-      await expect(page.locator('#mobile-menu').getByText('first_test_user@test.test')).toBeVisible();
+      await expect(
+        page.locator("#mobile-menu").getByText("First User")
+      ).toBeVisible();
+      await expect(
+        page.locator("#mobile-menu").getByText("first_test_user@test.test")
+      ).toBeVisible();
 
-      await layout.closeMobileMenuButton.click();
-
-      await expect(layout.closeMobileMenuButton).not.toBeVisible();
-      await expect(layout.openMobileMenuButton).toBeVisible();
+      await menu.closeButton.click();
 
       await expect(layout.registerLink).not.toBeVisible();
       await expect(layout.logInLink).not.toBeVisible();
-      await expect(layout.logOutLink).not.toBeVisible();
-      await expect(layout.settingsLink).not.toBeVisible();
 
-      await expect(page.locator('#mobile-menu').getByText('First User')).not.toBeVisible();
-      await expect(page.locator('#mobile-menu').getByText('first_test_user@test.test')).not.toBeVisible();
+      await expect(
+        page.locator("#mobile-menu").getByText("First User")
+      ).not.toBeVisible();
+      await expect(
+        page.locator("#mobile-menu").getByText("first_test_user@test.test")
+      ).not.toBeVisible();
+
+      await validateMenu(menu);
     });
+
   });
 
-  test("has title", async ({ page }) => {
-    const landingPage = new LandingPage(page);
-    await landingPage.goto();
-    await expect(landingPage.heading).toBeVisible();
-  });
-
-  test("shows the user's username", async ({ page }) => {
-    const landingPage = new LandingPage(page);
-    await landingPage.goto();
-    const firstUserUsername = await page.getByRole('list').getByText('First User');
-    await expect(firstUserUsername).toBeVisible();
-  });
-
-  test("shows links to log out and the user's settings page", async ({
-    page,
-  }) => {
+  test("shows and hides the user menu", async ({ page }) => {
     const landingPage = new LandingPage(page);
     const layout = new LayoutPage(page);
+    const menu = layout.userMenu;
     await landingPage.goto();
 
-    await expect(layout.logOutLink).toBeVisible();
-    await expect(layout.settingsLink).toBeVisible();
     await expect(layout.logInLink).not.toBeVisible();
+    await expect(menu.settingsLink).not.toBeVisible();
+    await expect(menu.closeButton).not.toBeVisible();
+
+    await menu.openButton.click();
+
     await expect(layout.registerLink).not.toBeVisible();
+    await expect(layout.logInLink).not.toBeVisible();
+
+    await menu.closeButton.click();
+
+    await expect(layout.registerLink).not.toBeVisible();
+    await expect(layout.logInLink).not.toBeVisible();
+
+    await validateMenu(menu);
   });
 });
