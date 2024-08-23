@@ -1,5 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { LandingPage } from "./landing-page";
+import { DashboardPage } from "./dashboard-page";
 
 export class LogInPage {
   public readonly emailInput: Locator;
@@ -12,15 +12,15 @@ export class LogInPage {
     this.logInButton = page.getByRole("button", { name: "Log in" });
   }
 
-  async logIn(email: string, password: string): Promise<LandingPage> {
+  async logIn(email: string, password: string): Promise<DashboardPage> {
     await this.emailInput.fill(email);
     await this.passwordInput.fill(password);
     await this.logInButton.click();
 
-    const landingPage = new LandingPage(this.page);
-    await expect(landingPage.heading).toBeVisible();
+    const dashboard = new DashboardPage(this.page);
+    await expect(dashboard.heading).toBeVisible();
 
-    return landingPage;
+    return dashboard;
   }
 
   async goto() {
