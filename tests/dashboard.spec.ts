@@ -3,6 +3,7 @@ import { Menu } from "./page-objects/menu";
 import { DashboardPage } from "./page-objects/dashboard-page";
 import { LayoutPage } from "./page-objects/layout-page";
 import { LogInPage } from "./page-objects/log-in-page";
+import { ChallengePage } from "./page-objects/challenge-page";
 
 test.describe("with an authenticated user", () => {
   test.use({ storageState: "playwright/.auth/first_test_user.json" });
@@ -100,11 +101,33 @@ test.describe("with an authenticated user", () => {
     await validateMenu(menu);
   });
 
-  test("shows the dashboard heading", async ({ page }) => {
+  test("shows the challenge form", async ({ page }) => {
     const dashboard = new DashboardPage(page);
     await dashboard.goto();
-    await expect(dashboard.heading).toBeVisible();
+
+    await expect(dashboard.challengeForm.heading).toBeVisible();
+    await expect(dashboard.challengeForm.toOneGameButton).toBeVisible();
+    await expect(dashboard.challengeForm.bestOf3Button).toBeVisible();
+    await expect(dashboard.challengeForm.bestOf5Button).toBeVisible();
+    await expect(dashboard.challengeForm.bestOf7Button).toBeVisible();
   });
+
+  test("allows creating a challenge", async ({ page }) => {
+    const dashboard = new DashboardPage(page);
+    await dashboard.goto();
+
+    const createChallengeButtons = [
+        dashboard.challengeForm.toOneGameButton,
+        dashboard.challengeForm.bestOf3Button,
+        dashboard.challengeForm.bestOf5Button,
+        dashboard.challengeForm.bestOf7Button,
+    ];
+
+    const randomChallengeButton = createChallengeButtons[Math.floor(Math.random() * createChallengeButtons.length)];
+    await randomChallengeButton.click();
+    const challenge = new ChallengePage(page);
+    await expect(challenge.heading).toBeVisible();
+});
 });
 
 test.describe("with no authenticated user", () => {

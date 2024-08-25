@@ -18,7 +18,7 @@ export class LogInPage {
     await this.logInButton.click();
 
     const dashboard = new DashboardPage(this.page);
-    await expect(dashboard.heading).toBeVisible();
+    await expect(dashboard.challengeForm.heading).toBeVisible();
 
     return dashboard;
   }

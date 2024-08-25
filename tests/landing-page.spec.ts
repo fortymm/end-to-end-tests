@@ -72,6 +72,6 @@ test.describe("with authenticated user", () => {
     const landingPage = new LandingPage(page);
     const dashboard = new DashboardPage(page);
     await landingPage.goto();
-    await expect(dashboard.heading).toBeVisible();
+    await expect(dashboard.challengeForm.heading).toBeVisible();
   });
 });

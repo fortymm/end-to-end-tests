@@ -1,13 +1,15 @@
-import { Locator, Page } from "@playwright/test";
+import { Page } from "@playwright/test";
+import { ChallengeFormPage } from "./challenge-form-page";
 
 export class DashboardPage {
-    public readonly heading: Locator;
+    public readonly challengeForm: ChallengeFormPage;
 
     constructor(private readonly page: Page) {
-        this.heading = page.getByRole("heading", { name: "Dashboard" });
+        this.challengeForm = new ChallengeFormPage(page.getByText('Challenge A Friend to just 1'));
     }
 
     async goto() {
         await this.page.goto("/dashboard");
+        await this.page.waitForSelector("body > .phx-connected");
     }
 }
