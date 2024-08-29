@@ -7,6 +7,7 @@ import { ChallengePage } from "./page-objects/challenge-page";
 
 test.describe("with an authenticated user", () => {
   test.use({ storageState: "playwright/.auth/first_test_user.json" });
+
   const validateMenu = async (menu: Menu) => {
     await expect(menu.logOutLink).not.toBeVisible();
     await expect(menu.settingsLink).not.toBeVisible();
@@ -117,17 +118,20 @@ test.describe("with an authenticated user", () => {
     await dashboard.goto();
 
     const createChallengeButtons = [
-        dashboard.challengeForm.toOneGameButton,
-        dashboard.challengeForm.bestOf3Button,
-        dashboard.challengeForm.bestOf5Button,
-        dashboard.challengeForm.bestOf7Button,
+      dashboard.challengeForm.toOneGameButton,
+      dashboard.challengeForm.bestOf3Button,
+      dashboard.challengeForm.bestOf5Button,
+      dashboard.challengeForm.bestOf7Button,
     ];
 
-    const randomChallengeButton = createChallengeButtons[Math.floor(Math.random() * createChallengeButtons.length)];
+    const randomChallengeButton =
+      createChallengeButtons[
+        Math.floor(Math.random() * createChallengeButtons.length)
+      ];
     await randomChallengeButton.click();
     const challenge = new ChallengePage(page);
-    await expect(challenge.heading).toBeVisible();
-});
+    await expect(challenge.copyUrlButton).toBeVisible();
+  });
 });
 
 test.describe("with no authenticated user", () => {
