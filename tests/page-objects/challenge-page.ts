@@ -1,9 +1,13 @@
 import { Locator, Page } from "@playwright/test";
 
 export class ChallengePage {
-  public readonly heading: Locator;
+  public readonly copyUrlButton: Locator;
+
+  async goto(slug: string) {
+    await this.page.goto(`/challenges/${slug}`);
+  }
 
   constructor(private readonly page: Page) {
-    this.heading = page.getByRole("heading", { name: "challenge", exact: true });
+    this.copyUrlButton = page.locator('#copy-url-button');
   }
 }
