@@ -2,6 +2,7 @@ import test, { expect } from "@playwright/test";
 import { ChallengePage } from "./page-objects/challenge-page";
 import { DashboardPage } from "./page-objects/dashboard-page";
 import { LogInPage } from "./page-objects/log-in-page";
+import { MatchPage } from "./page-objects/match-page";
 
 test.describe("when nobody is logged in", () => {
   test("redirects to the login page", async ({ page }) => {
@@ -53,6 +54,39 @@ test.describe("with somebody logged in", () => {
       await expect(page.getByRole("textbox")).toHaveValue(inviteUrl);
     });
   });
+
+  test("allows creating a new match", async ({ browser }) => {
+    const challengerPage = await browser.newPage({ storageState: "playwright/.auth/first_test_user.json" });
+    const responderPage = await browser.newPage({ storageState: "playwright/.auth/second_test_user.json" });
+
+    const dashboard = new DashboardPage(challengerPage);
+    await dashboard.goto();
+    await dashboard.challengeForm.bestOf7Button.click();
+    const inviteUrl = await challengerPage.getByRole("textbox").inputValue();
+
+    const challenge = new ChallengePage(responderPage);
+    await responderPage.goto(inviteUrl);
+    const matchPage = await challenge.acceptChallenge();
+    await expect(matchPage.heading).toBeVisible();
+  });
+
+  test("redirects to the match page when the challenge has already been accepted", async ({ browser }) => {
+    const challengerPage = await browser.newPage({ storageState: "playwright/.auth/first_test_user.json" });
+    const responderPage = await browser.newPage({ storageState: "playwright/.auth/second_test_user.json" });
+
+    const dashboard = new DashboardPage(challengerPage);
+    await dashboard.goto();
+    await dashboard.challengeForm.bestOf7Button.click();
+    const inviteUrl = await challengerPage.getByRole("textbox").inputValue();
+
+    const challenge = new ChallengePage(responderPage);
+    await responderPage.goto(inviteUrl);
+    const matchPage = await challenge.acceptChallenge();
+
+    await responderPage.goto(inviteUrl);
+    await expect(matchPage.heading).toBeVisible();
+  });
+
 });
 
 test.describe("when the challenge can't be found", () => {
