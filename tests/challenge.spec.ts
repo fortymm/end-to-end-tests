@@ -68,6 +68,9 @@ test.describe("with somebody logged in", () => {
     await responderPage.goto(inviteUrl);
     const matchPage = await challenge.acceptChallenge();
     await expect(matchPage.heading).toBeVisible();
+
+    const challengerMatchPage = new MatchPage(challengerPage);
+    await expect(challengerMatchPage.heading).toBeVisible();
   });
 
   test("redirects to the match page when the challenge has already been accepted", async ({ browser }) => {
