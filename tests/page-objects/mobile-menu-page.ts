@@ -8,8 +8,10 @@ export class MobileMenuPage implements Menu {
   public readonly settingsLink: Locator;
   public readonly logInLink: Locator;
   public readonly registerLink: Locator;
+  public notificationsButton: Locator;
 
   constructor(private readonly page: Page) {
+    this.notificationsButton = page.getByRole('button', { name: 'View notifications' });
     this.openButton = page.getByRole("button", { name: "Open main menu" });
     this.closeButton = page.getByRole("button", { name: "Close main menu" });
     this.logOutLink = page.getByRole("link", { name: "Log out" });

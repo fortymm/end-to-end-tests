@@ -35,6 +35,21 @@ test.describe("with an authenticated user", () => {
   test.describe("when viewed on mobile", () => {
     test.use({ viewport: devices["iPhone 13"].viewport });
 
+    test("shows and hides the notifications slideover", async ({ page }) => {
+      const dashboard = new DashboardPage(page);
+      const layout = new LayoutPage(page);
+
+      await expect(layout.notificationsSlideover.heading).not.toBeVisible();
+
+      await dashboard.goto();
+      await layout.mobileMenu.openButton.click();
+      await layout.mobileMenu.notificationsButton.click();
+
+      await expect(layout.notificationsSlideover.heading).toBeVisible();
+      await layout.notificationsSlideover.closeButton.click();
+      await expect(layout.notificationsSlideover.heading).not.toBeVisible();
+    });
+
     test("shows and hides the user menu", async ({ page }) => {
       const dashboard = new DashboardPage(page);
       const layout = new LayoutPage(page);
@@ -79,6 +94,18 @@ test.describe("with an authenticated user", () => {
     });
   });
 
+  test("shows and hides the notifications slideover", async ({ page }) => {
+    const dashboard = new DashboardPage(page);
+    const layout = new LayoutPage(page);
+    await dashboard.goto();
+
+    await layout.notificationsButton.click();
+
+    await expect(layout.notificationsSlideover.heading).toBeVisible();
+    await layout.notificationsSlideover.closeButton.click();
+    await expect(layout.notificationsSlideover.heading).not.toBeVisible();
+  });
+
   test("shows and hides the user menu", async ({ page }) => {
     const dashboard = new DashboardPage(page);
     const layout = new LayoutPage(page);
@@ -114,12 +141,18 @@ test.describe("with an authenticated user", () => {
   });
 
   test("shows the ongoing matches for the player", async ({ browser }) => {
-    const challengerPage = await browser.newPage({ storageState: "playwright/.auth/first_test_user.json" });
-    const responderPage = await browser.newPage({ storageState: "playwright/.auth/second_test_user.json" });
+    const challengerPage = await browser.newPage({
+      storageState: "playwright/.auth/first_test_user.json",
+    });
+    const responderPage = await browser.newPage({
+      storageState: "playwright/.auth/second_test_user.json",
+    });
 
     const dashboard = new DashboardPage(challengerPage);
     await dashboard.goto();
-    const originalNumberOfMatches = await challengerPage.getByText("Second User vs First user").count();
+    const originalNumberOfMatches = await challengerPage
+      .getByText("Second User vs First user")
+      .count();
     await dashboard.challengeForm.bestOf7Button.click();
     const inviteUrl = await challengerPage.getByRole("textbox").inputValue();
 
@@ -129,16 +162,24 @@ test.describe("with an authenticated user", () => {
     await expect(matchPage.heading).toBeVisible();
 
     await dashboard.goto();
-    const numberOfMatches = await challengerPage.getByText("Second User vs First user").count();
+    const numberOfMatches = await challengerPage
+      .getByText("Second User vs First user")
+      .count();
     await expect(numberOfMatches).toBeGreaterThan(originalNumberOfMatches);
   });
 
-  test("does not show ongoing matches for other players", async ({ browser }) => {
-    const playerFour = await browser.newPage({ storageState: "playwright/.auth/fourth_test_user.json" });
+  test("does not show ongoing matches for other players", async ({
+    browser,
+  }) => {
+    const playerFour = await browser.newPage({
+      storageState: "playwright/.auth/fourth_test_user.json",
+    });
     const dashboard = new DashboardPage(playerFour);
     await dashboard.goto();
-    await expect(playerFour.getByText("Second User vs First User")).not.toBeVisible();
-  })
+    await expect(
+      playerFour.getByText("Second User vs First User")
+    ).not.toBeVisible();
+  });
 
   test("allows creating a challenge", async ({ page }) => {
     const dashboard = new DashboardPage(page);
