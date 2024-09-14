@@ -1,5 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { MatchPage } from "./match-page";
+import { NewScorePage } from "./new-score-page";
 
 export class ChallengePage {
   public readonly copyUrlButton: Locator;
@@ -14,14 +14,14 @@ export class ChallengePage {
     this. acceptChallengeButton = page.getByRole('button', { name: 'Accept the challenge' });
   }
 
-  async acceptChallenge(): Promise<MatchPage> {
+  async acceptChallenge(): Promise<NewScorePage> {
     await this.page.waitForSelector('body > .phx-connected');
     await this.acceptChallengeButton.click();
 
-    const matchPage = new MatchPage(this.page);
+    const newScorePage = new NewScorePage(this.page);
     await this.page.waitForSelector('body > .phx-connected');
-    await expect(matchPage.heading).toBeVisible();
+    await expect(newScorePage.header).toBeVisible();
 
-    return matchPage;
+    return newScorePage;
   }
 }
