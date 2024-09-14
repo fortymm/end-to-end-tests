@@ -2,7 +2,7 @@ import test, { expect } from "@playwright/test";
 import { ChallengePage } from "./page-objects/challenge-page";
 import { DashboardPage } from "./page-objects/dashboard-page";
 import { LogInPage } from "./page-objects/log-in-page";
-import { MatchPage } from "./page-objects/match-page";
+import { NewScorePage } from "./page-objects/new-score-page";
 
 test.describe("when nobody is logged in", () => {
   test("redirects to the login page", async ({ page }) => {
@@ -66,14 +66,14 @@ test.describe("with somebody logged in", () => {
 
     const challenge = new ChallengePage(responderPage);
     await responderPage.goto(inviteUrl);
-    const matchPage = await challenge.acceptChallenge();
-    await expect(matchPage.heading).toBeVisible();
+    const newScorePage = await challenge.acceptChallenge();
+    await expect(newScorePage.header).toBeVisible();
 
-    const challengerMatchPage = new MatchPage(challengerPage);
-    await expect(challengerMatchPage.heading).toBeVisible();
+    const challengerNewScorePage = new NewScorePage(challengerPage);
+    await expect(challengerNewScorePage.header).toBeVisible();
   });
 
-  test("redirects to the match page when the challenge has already been accepted", async ({ browser }) => {
+  test("redirects to the new score page when the challenge has already been accepted", async ({ browser }) => {
     const challengerPage = await browser.newPage({ storageState: "playwright/.auth/first_test_user.json" });
     const responderPage = await browser.newPage({ storageState: "playwright/.auth/second_test_user.json" });
 
@@ -84,10 +84,10 @@ test.describe("with somebody logged in", () => {
 
     const challenge = new ChallengePage(responderPage);
     await responderPage.goto(inviteUrl);
-    const matchPage = await challenge.acceptChallenge();
+    const newScorePage = await challenge.acceptChallenge();
 
     await responderPage.goto(inviteUrl);
-    await expect(matchPage.heading).toBeVisible();
+    await expect(newScorePage.header).toBeVisible();
   });
 
 });

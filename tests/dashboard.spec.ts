@@ -158,8 +158,8 @@ test.describe("with an authenticated user", () => {
 
     const challenge = new ChallengePage(responderPage);
     await responderPage.goto(inviteUrl);
-    const matchPage = await challenge.acceptChallenge();
-    await expect(matchPage.heading).toBeVisible();
+    const newScorePage = await challenge.acceptChallenge();
+    await expect(newScorePage.header).toBeVisible();
 
     await dashboard.goto();
     const numberOfMatches = await challengerPage
