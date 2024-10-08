@@ -25,7 +25,7 @@ import { NewScorePage } from './page-objects/new-score-page';
     await expect(matchPage.heading).toBeVisible();
   });
 
-  test('can access the page as a match participant', async ({ page, browser }) => {
+  test('can access the page as a match participant', async ({ browser }) => {
     const challengerPage = await browser.newPage({ storageState: "playwright/.auth/first_test_user.json" });
     const responderPage = await browser.newPage({ storageState: "playwright/.auth/second_test_user.json" });
 
@@ -40,4 +40,20 @@ import { NewScorePage } from './page-objects/new-score-page';
     const page = await browser.newPage({ storageState: "playwright/.auth/first_test_user.json" });
     await page.goto('http://localhost:4000/matches/0/games/0/scores/new');
     await expect(page.getByRole('heading', { name: 'Ecto.NoResultsError at GET /' })).toBeVisible();
+  });
+
+  test("allows the user to create a score", async ({ browser }) => {
+    const challengerPage = await browser.newPage({ storageState: "playwright/.auth/first_test_user.json" });
+    const responderPage = await browser.newPage({ storageState: "playwright/.auth/second_test_user.json" });
+
+    await MatchPage.createMatchBetween(challengerPage, responderPage);
+
+    const newScoreUrl = await challengerPage.url();
+    await challengerPage.goto(newScoreUrl);
+    const challengerScorePage = new NewScorePage(challengerPage);
+
+    await responderPage.goto(newScoreUrl);
+
+    const validationPage = await challengerScorePage.form.fill({ name: "First User", score: 11 }, { name: "Second User", score: 4 });
+    await expect(validationPage.header).toBeVisible();
   });
